@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assassin</title>
+</head>
+<body>
+    <input type="text" id="code" placeholder="Enter your 6 digit game code">
+    <button id="start">Join</button><br>
+
+    <!-- if code = 123456, show the following -->
+    <label>Enter your name:</label><br>
+    <input type="text" id="name" placeholder="First name"><br>
+    <input type="text" id="name" placeholder="Last name"><br>
+
+    <!-- if name isn't already playing, show the following -->
+    <label for="grade">Select your grade:</label>
+    <select id="grade">
+        <option value="9">Freshman</option>
+        <option value="10">Sophomore</option>
+        <option value="11">Junior</option>
+        <option value="12">Senior</option>
+    </select><br>
+    <label for="team">Now, select your team:</label><br>
+    <button>Team 1<br>4/5 Players</button><br>
+    <button disabled>Team 2<br>5/5 Players</button><br>
+    <button>Team 3<br>2/5 Players</button><br>
+    <button>Team 4<br>3/5 Players</button><br>
+    <button>I would like to create a new team</button><br>
+
+    <!-- if new team is created -->
+    <label for="teamName">Enter your team name:</label>
+    <input type="text" id="teamName" placeholder="Team name"><br>
+    <button>Create Team</button>
+</body>
+</html>
