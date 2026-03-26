@@ -1,7 +1,21 @@
-// api/submit.js
 import { MongoClient } from "mongodb";
 
 let cachedClient = null;
+
+async function getClient() {
+  if (cachedClient) {
+    try {
+      await cachedClient.db("admin").command({ ping: 1 });
+      return cachedClient;
+    } catch {
+      cachedClient = null;
+    }
+  }
+
+  cachedClient = new MongoClient(process.env.MONGO_URI);
+  await cachedClient.connect();
+  return cachedClient;
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -15,14 +29,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Connect to MongoDB (cache connection)
-    if (!cachedClient) {
-      cachedClient = new MongoClient(process.env.MONGO_URI);
-      await cachedClient.connect();
-    }
-
-    const db = cachedClient.db("AssassinDB");       // your database
-    const collection = db.collection("codes");      // your collection
+    const client = await getClient();
+    const db = client.db("AssassinDB");
+    const collection = db.collection("codes");
 
     const result = await collection.insertOne({
       player,
@@ -32,7 +41,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ success: true, id: result.insertedId });
   } catch (err) {
-    console.error("MongoDB Error:", err); // <-- logs exact error
+    console.error("MongoDB Error:", err);
+    cachedClient = null;
     return res.status(500).json({ success: false, error: err.message });
   }
 }
