@@ -1,16 +1,310 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Submit Game Code</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assassin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f6f3;
+      --surface: #ffffff;
+      --border: #e2e1de;
+      --text: #1a1a1a;
+      --muted: #888;
+      --accent: #1a1a1a;
+      --danger: #c0392b;
+      --radius: 6px;
+      --mono: 'DM Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .wordmark {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: var(--sans);
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 16px;
+      appearance: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .input-row input { margin-bottom: 16px; }
+
+    button.primary {
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-top: 4px;
+    }
+
+    button.primary:hover { opacity: 0.82; }
+    button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .team-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .team-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      font-family: var(--sans);
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+      color: var(--text);
+    }
+
+    .team-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .team-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .team-btn.selected {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .team-btn .count {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .team-btn.full .count { color: var(--danger); }
+
+    .new-team-toggle {
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-family: var(--sans);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .new-team-toggle:hover { color: var(--text); }
+
+    .error {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: -10px;
+      margin-bottom: 14px;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    .success-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Submit Your Game Code</h1>
-  <form id="codeForm">
-    <input type="text" name="player" placeholder="Your Name" required>
-    <input type="text" name="code" placeholder="6-digit Code" required>
-    <button type="submit">Submit</button>
-  </form>
+  <div class="card">
+    <div class="wordmark">Assassin — 2025</div>
+
+    <!-- Step 1: Game Code -->
+    <div class="step active" id="step-code">
+      <h2>Enter game code</h2>
+      <p class="subtitle">You'll need the 6-digit code from your organizer to join.</p>
+      <label for="code">Game Code</label>
+      <input type="text" id="code" placeholder="••••••" maxlength="6" autocomplete="off">
+      <div class="error" id="code-error"></div>
+      <button class="primary" id="btn-code">Join →</button>
+    </div>
+
+    <!-- Step 2: Name -->
+    <div class="step" id="step-name">
+      <h2>What's your name?</h2>
+      <p class="subtitle">We'll check if you already have an account.</p>
+      <label>Name</label>
+      <div class="input-row">
+        <input type="text" id="firstName" placeholder="First">
+        <input type="text" id="lastName" placeholder="Last">
+      </div>
+      <div class="error" id="name-error"></div>
+      <button class="primary" id="btn-name">Continue →</button>
+    </div>
+
+    <!-- Step 3a: Returning player login -->
+    <div class="step" id="step-login">
+      <h2>Welcome back.</h2>
+      <p class="subtitle" id="login-subtitle"></p>
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" placeholder="Your password">
+      <div class="error" id="login-error"></div>
+      <button class="primary" id="btn-login">Sign In →</button>
+    </div>
+
+    <!-- Step 3b: New player registration -->
+    <div class="step" id="step-register">
+      <h2>Create your account</h2>
+      <p class="subtitle">Almost there — set a password, pick your grade, and join a team.</p>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Choose a password">
+
+      <label for="grade">Grade</label>
+      <select id="grade">
+        <option value="9">Freshman</option>
+        <option value="10">Sophomore</option>
+        <option value="11">Junior</option>
+        <option value="12">Senior</option>
+      </select>
+
+      <hr class="divider">
+
+      <label>Select a team</label>
+      <div class="team-list" id="team-list">
+        <p style="font-size:13px;color:var(--muted)">Loading teams…</p>
+      </div>
+
+      <button class="new-team-toggle" id="toggle-new-team">+ Create a new team</button>
+
+      <div id="new-team-section" style="display:none">
+        <label for="teamName">Team name</label>
+        <input type="text" id="teamName" placeholder="e.g. The Shadows">
+      </div>
+
+      <div class="error" id="register-error"></div>
+      <button class="primary" id="btn-register">Join Game →</button>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div class="step" id="step-success">
+      <div class="success-icon">✓</div>
+      <h2 id="success-title">You're in.</h2>
+      <p class="subtitle" id="success-msg"></p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

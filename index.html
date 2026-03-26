@@ -9,12 +9,14 @@
     <input type="text" id="code" placeholder="Enter your 6 digit game code">
     <button id="start">Join</button><br>
 
-    <!-- if code = 123456, show the following -->
+    <!-- if code = the CODE value stored in vercel env, show the following -->
     <label>Enter your name:</label><br>
     <input type="text" id="name" placeholder="First name"><br>
     <input type="text" id="name" placeholder="Last name"><br>
 
-    <!-- if name isn't already playing, show the following -->
+    <!-- if name isn't already playing (check db for users with same name), show the following -->
+    <label for="password">Create a password:</label><br>
+    <input type="password" id="password" placeholder="Password"><br>
     <label for="grade">Select your grade:</label>
     <select id="grade">
         <option value="9">Freshman</option>
@@ -33,5 +35,9 @@
     <label for="teamName">Enter your team name:</label>
     <input type="text" id="teamName" placeholder="Team name"><br>
     <button>Create Team</button>
+
+    <!-- if name is already playing, show the following -->
+     <label for="password">Welcome back! Enter your password:</label><br>
+     <input type="password" id="password" placeholder="Password"><br>
 </body>
 </html>
